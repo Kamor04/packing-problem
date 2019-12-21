@@ -114,15 +114,16 @@ lblItemDepth.grid(row=11, column=0)
 txtItemDepth = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemDepth)
 txtItemDepth.grid(row=11, column=1)
 
+def printRecords():
+    conn = sqlite3.connect('packingProblem.db')
+    curr = conn.execute("SELECT * FROM bin")
+    records = curr.fetchall()
+    print(records)
 
+    print_records = ''
+    for record in records[0]:
+        print_records += str(record) + "\n"
 
-
-
-def submitData():
-
-    packer.addItem(item1)
-    packer.pack()
-    root.destroy()
 
 def saveToDb():
     conn = sqlite3.connect('packingProblem.db')
@@ -145,9 +146,50 @@ def saveToDb():
     curr = conn.execute("SELECT * FROM items")
     print(curr.fetchone())
 
+    curr = conn.execute("SELECT bin_name, bin_width, bin_height, bin_depth FROM bin")
+    records = curr.fetchall()
+    print(records)
+
+
+    print_binRecords = ''
+    for record in records[0]:
+        print_binRecords += str(record) + "\n"
+
+    binRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Kontener", fg='black', width=15, bd=10, anchor='w')
+    binRecordTitle.grid(row=12, column=0)
+    binRecord = Label(root, font=('georgia', 16, 'bold'), text=print_binRecords, fg='black', width=15, bd=10, anchor='w')
+    binRecord.grid(row=13, column=0)
+
+    curr = conn.execute("SELECT item_name, item_width, item_height, item_depth FROM items")
+    itemsRecords = curr.fetchall()
+
+    print_itemRecords = ''
+    i = 0
+    for itemRecord in itemsRecords[i]:
+        print_binRecords += str(itemRecord) + " "
+        i = i + 1
+
+    itemRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Przedmioty:", fg='black', width=15, bd=10, anchor='w')
+    itemRecordTitle.grid(row=12, column=1)
+    binRecord = Label(root, font=('georgia', 16, 'bold'), text=print_itemRecords, fg='black', width=15, bd=10,
+                      anchor='w')
+    binRecord.grid(row=13, column=1)
+
     conn.commit()
     conn.close()
 
+    txtBinName.delete(0, END)
+    txtBinWidth.delete(0, END)
+    txtBinHeight.delete(0, END)
+    txtBinDepth.delete(0, END)
+    txtBinName.configure(state="disabled")
+    txtBinWidth.configure(state="disabled")
+    txtBinHeight.configure(state="disabled")
+    txtBinDepth.configure(state="disabled")
+    txtItemName.delete(0, END)
+    txtItemWidth.delete(0, END)
+    txtItemHeight.delete(0, END)
+    txtItemDepth.delete(0, END)
 
 
 submitButton = Button(pady=8, bd=2, fg='black', font=('arial', 10, 'bold'), width=10, text="Submit", bg='white', command=saveToDb).grid(row=13, column=2)
@@ -167,7 +209,6 @@ item10 = Item("Item 10", 10.0, 14.0, 2.0)
 item11 = Item("Item 11", 1.0, 1.0, 2.0)
 item12 = Item("Item 12", 1.0, 1.0, 2.0)
 item13 = Item("Item 13", 2.0, 1.0, 2.0)
-
 
 
 root.mainloop()
