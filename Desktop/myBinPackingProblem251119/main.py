@@ -20,10 +20,12 @@ curr = conn.cursor()
 #
 # curr.execute("""CREATE TABLE items (
 #         id integer PRIMARY KEY,
+#         id_bin integer NOT NULL,
 #         item_name text,
 #         item_width integer,
 #         item_height integer,
-#         item_depth integer
+#         item_depth integer,
+#         FOREIGN KEY(id_bin) REFERENCES bin (id) ON UPDATE CASCADE
 #         )""")
 #
 # curr.execute("""CREATE TABLE packed_items (
@@ -54,11 +56,8 @@ root.bind("<Escape>", exit)
 
 binName = StringVar()
 binWidth = IntVar()
-binWidth = int(binWidth.get())
 binHeight = IntVar()
-binHeight = int(binHeight.get())
 binDepth = IntVar()
-binDepth = int(binDepth.get())
 
 
 itemName = StringVar()
@@ -70,62 +69,52 @@ itemDepth = IntVar()
 itemDepth = int(itemDepth.get())
 
 
-lblBinName = Label(root, font=('georgia', 16, 'bold'), text="Bin name", fg='black', width=15, bd=10, anchor='w')
+lblBinName = Label(root, font=('georgia', 14, 'bold'), text="Nazwa kontenera ", fg='black', width=15, bd=10, anchor='w')
 lblBinName.grid(row=3, column=0)
-txtBinName = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binName)
+txtBinName = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binName)
 txtBinName.grid(row=3, column=1)
 
 
-lblBinWidth = Label(root, font=('georgia', 16, 'bold'), text="Bin Width", fg='black', width=15, bd=10, anchor='w')
+lblBinWidth = Label(root, font=('georgia', 14, 'bold'), text="Szerokość", fg='black', width=15, bd=10, anchor='w')
 lblBinWidth.grid(row=4, column=0)
-txtBinWidth = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binWidth)
+txtBinWidth = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binWidth)
 txtBinWidth.grid(row=4, column=1)
 
-lblBinHeight = Label(root, font=('georgia', 16, 'bold'), text="Bin Height", fg='black', width=15, bd=10, anchor='w')
+lblBinHeight = Label(root, font=('georgia', 14, 'bold'), text="Wysokość", fg='black', width=15, bd=10, anchor='w')
 lblBinHeight.grid(row=5, column=0)
-txtBinHeight = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binHeight)
+txtBinHeight = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binHeight)
 txtBinHeight.grid(row=5, column=1)
 
-lblBinDepth = Label(root, font=('georgia', 16, 'bold'), text="Bin Depth", fg='black', width=15, bd=10, anchor='w')
+lblBinDepth = Label(root, font=('georgia', 14, 'bold'), text="Głębokość", fg='black', width=15, bd=10, anchor='w')
 lblBinDepth.grid(row=6, column=0)
-txtBinDepth = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binDepth)
+txtBinDepth = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binDepth)
 txtBinDepth.grid(row=6, column=1)
 
 ##
 
-lblItemName = Label(root, font=('georgia', 16, 'bold'), text="Item name", fg='black', width=15, bd=10, anchor='w')
+lblItemName = Label(root, font=('georgia', 14, 'bold'), text="Nazwa przedmiotu", fg='black', width=15, bd=10, anchor='w')
 lblItemName.grid(row=8, column=0)
-txtItemName = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemName)
+txtItemName = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemName)
 txtItemName.grid(row=8, column=1)
 
 
-lblItemWidth = Label(root, font=('georgia', 16, 'bold'), text="Item Width", fg='black', width=15, bd=10, anchor='w')
+lblItemWidth = Label(root, font=('georgia', 14, 'bold'), text="Szerokość", fg='black', width=15, bd=10, anchor='w')
 lblItemWidth.grid(row=9, column=0)
-txtItemWidth = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemWidth)
+txtItemWidth = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemWidth)
 txtItemWidth.grid(row=9, column=1)
 
-lblItemHeight = Label(root, font=('georgia', 16, 'bold'), text="Item Height", fg='black', width=15, bd=10, anchor='w')
+lblItemHeight = Label(root, font=('georgia', 14, 'bold'), text="Wysokość", fg='black', width=15, bd=10, anchor='w')
 lblItemHeight.grid(row=10, column=0)
-txtItemHeight = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemHeight)
+txtItemHeight = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemHeight)
 txtItemHeight.grid(row=10, column=1)
 
-lblItemDepth = Label(root, font=('georgia', 16, 'bold'), text="Item Depth", fg='black', width=15, bd=10, anchor='w')
+lblItemDepth = Label(root, font=('georgia', 14, 'bold'), text="Głębokość", fg='black', width=15, bd=10, anchor='w')
 lblItemDepth.grid(row=11, column=0)
-txtItemDepth = Entry(root, font=('arial', 16, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemDepth)
+txtItemDepth = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=itemDepth)
 txtItemDepth.grid(row=11, column=1)
 
-def printRecords():
-    conn = sqlite3.connect('packingProblem.db')
-    curr = conn.execute("SELECT * FROM bin")
-    records = curr.fetchall()
-    print(records)
 
-    print_records = ''
-    for record in records[0]:
-        print_records += str(record) + "\n"
-
-
-def saveToDb():
+def saveBinToDb():
     conn = sqlite3.connect('packingProblem.db')
 
     entry_binName = txtBinName.get()
@@ -137,46 +126,19 @@ def saveToDb():
     curr = conn.execute("SELECT * FROM bin")
     print(curr.fetchone())
 
-    entry_itemName = txtItemName.get()
-    entry_itemWidth = txtItemWidth.get()
-    entry_itemHeight = txtItemHeight.get()
-    entry_itemDepth = txtItemDepth.get()
-    conn.execute('insert into items values (NULL,?,?,?,?)',
-                 (str(entry_itemName), str(entry_itemWidth), str(entry_itemHeight), str(entry_itemDepth)))
-    curr = conn.execute("SELECT * FROM items")
-    print(curr.fetchone())
-
     curr = conn.execute("SELECT bin_name, bin_width, bin_height, bin_depth FROM bin")
     records = curr.fetchall()
     print(records)
 
-
     print_binRecords = ''
-    for record in records[0]:
-        print_binRecords += str(record) + "\n"
+    for record in records:
+        print_binRecords += str(record[0]) + " " + "[" + str(record[1]) + ", " + str(record[2]) + ", " + str(record[3]) + "]" + "\n"
 
     binRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Kontener", fg='black', width=15, bd=10, anchor='w')
     binRecordTitle.grid(row=12, column=0)
-    binRecord = Label(root, font=('georgia', 16, 'bold'), text=print_binRecords, fg='black', width=15, bd=10, anchor='w')
-    binRecord.grid(row=13, column=0)
-
-    curr = conn.execute("SELECT item_name, item_width, item_height, item_depth FROM items")
-    itemsRecords = curr.fetchall()
-
-    print_itemRecords = ''
-    i = 0
-    for itemRecord in itemsRecords[i]:
-        print_binRecords += str(itemRecord) + " "
-        i = i + 1
-
-    itemRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Przedmioty:", fg='black', width=15, bd=10, anchor='w')
-    itemRecordTitle.grid(row=12, column=1)
-    binRecord = Label(root, font=('georgia', 16, 'bold'), text=print_itemRecords, fg='black', width=15, bd=10,
+    binRecord = Label(root, font=('georgia', 16, 'bold'), text=print_binRecords, fg='black', width=15, bd=10,
                       anchor='w')
-    binRecord.grid(row=13, column=1)
-
-    conn.commit()
-    conn.close()
+    binRecord.grid(row=13, column=0)
 
     txtBinName.delete(0, END)
     txtBinWidth.delete(0, END)
@@ -186,13 +148,50 @@ def saveToDb():
     txtBinWidth.configure(state="disabled")
     txtBinHeight.configure(state="disabled")
     txtBinDepth.configure(state="disabled")
+
+    conn.commit()
+    conn.close()
+
+submitBinButton = Button(pady=8, bd=2, fg='black', font=('arial', 10, 'bold'), width=15, text="Dodaj kontener", bg='white', command=saveBinToDb).grid(row=7, column=2)
+
+
+def saveItemToDb():
+    conn = sqlite3.connect('packingProblem.db')
+
+    entry_itemName = txtItemName.get()
+    entry_itemWidth = txtItemWidth.get()
+    entry_itemHeight = txtItemHeight.get()
+    entry_itemDepth = txtItemDepth.get()
+    conn.execute('insert into items values (NULL,(SELECT max(id) from bin),?,?,?,?)',
+                 (str(entry_itemName), str(entry_itemWidth), str(entry_itemHeight), str(entry_itemDepth)))
+    curr = conn.execute("SELECT * FROM items")
+    print(curr.fetchone())
+
+
+
+    curr = conn.execute("SELECT item_name, item_width, item_height, item_depth FROM items")
+    itemsRecords = curr.fetchall()
+
+    print_itemRecords = ''
+    for itemRecord in itemsRecords:
+        print_itemRecords += str(itemRecord[0]) + " " + "[" + str(itemRecord[1]) + ", " + str(itemRecord[2]) + ", " + str(itemRecord[3]) + "]" + "\n"
+
+    itemRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Przedmioty:", fg='black', width=15, bd=10, anchor='w')
+    itemRecordTitle.grid(row=12, column=1)
+    itemRecord = Label(root, font=('georgia', 16, 'bold'), text=print_itemRecords, fg='black', width=15, bd=10,
+                      anchor='w')
+    itemRecord.grid(row=13, column=1)
+
+    conn.commit()
+    conn.close()
+
     txtItemName.delete(0, END)
     txtItemWidth.delete(0, END)
     txtItemHeight.delete(0, END)
     txtItemDepth.delete(0, END)
 
 
-submitButton = Button(pady=8, bd=2, fg='black', font=('arial', 10, 'bold'), width=10, text="Submit", bg='white', command=saveToDb).grid(row=13, column=2)
+submitItemButton = Button(pady=8, bd=2, fg='black', font=('arial', 10, 'bold'), width=15, text="Dodaj przedmiot", bg='white', command=saveItemToDb).grid(row=13, column=2)
 
 
 bin1 = Bin("Box", 200.0, 200.0, 200.0)
