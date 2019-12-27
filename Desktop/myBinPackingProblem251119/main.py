@@ -162,11 +162,12 @@ def saveItemToDb():
 
     curr = conn.execute("SELECT item_name, item_width, item_height, item_depth FROM items")
     itemsRecords = curr.fetchall()
+
     itemRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Przedmioty:", fg='black', width=15, bd=10, anchor='w')
     itemRecordTitle.grid(row=13, column=0)
     scrollbar = Scrollbar(root)
-    scrollbar.grid(row=14, column=1)
-    listbox = Listbox(root, yscrollcommand=scrollbar.set)
+    scrollbar.grid(row=14, column=1, sticky=W+S+N)
+    listbox = Listbox(root, width='36', yscrollcommand=scrollbar.set)
     for itemRecord in itemsRecords:
         print_itemRecords = ''
         print_itemRecords += str(itemRecord[0]) + " " + "[" + str(itemRecord[1]) + ", " + str(itemRecord[2]) + ", " + str(itemRecord[3]) + "]" + "\n"
