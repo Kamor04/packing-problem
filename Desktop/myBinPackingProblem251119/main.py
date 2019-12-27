@@ -10,47 +10,53 @@ import sqlite3
 conn = sqlite3.connect('packingProblem.db')
 curr = conn.cursor()
 
-# curr.execute("""CREATE TABLE bin (
-#         id integer PRIMARY KEY,
-#         bin_name text,
-#         bin_width integer,
-#         bin_height integer,
-#         bin_depth integer
-#         )""")
-#
-# curr.execute("""CREATE TABLE items (
-#         id integer PRIMARY KEY,
-#         id_bin integer NOT NULL,
-#         item_name text,
-#         item_width integer,
-#         item_height integer,
-#         item_depth integer,
-#         FOREIGN KEY(id_bin) REFERENCES bin (id) ON UPDATE CASCADE
-#         )""")
-#
-# curr.execute("""CREATE TABLE packed_items (
-#         id integer PRIMARY KEY,
-#         item_name text,
-#         item_width integer,
-#         item_height integer,
-#         item_depth integer
-#         )""")
-#
-# curr.execute("""CREATE TABLE unpacked_items (
-#         id integer PRIMARY KEY,
-#         item_name text,
-#         item_width integer,
-#         item_height integer,
-#         item_depth integer
-#         )""")
+curr.execute('DROP TABLE bin')
+curr.execute('DROP TABLE items')
+curr.execute('DROP TABLE packed_items')
+curr.execute('DROP TABLE unpacked_items')
+
+curr.execute("""CREATE TABLE bin (
+        id integer PRIMARY KEY,
+        bin_name text,
+        bin_width integer,
+        bin_height integer,
+        bin_depth integer
+        )""")
+
+curr.execute("""CREATE TABLE items (
+        id integer PRIMARY KEY,
+        id_bin integer NOT NULL,
+        item_name text,
+        item_width integer,
+        item_height integer,
+        item_depth integer,
+        FOREIGN KEY(id_bin) REFERENCES bin (id) ON UPDATE CASCADE
+        )""")
+
+curr.execute("""CREATE TABLE packed_items (
+        id integer PRIMARY KEY,
+        item_name text,
+        item_width integer,
+        item_height integer,
+        item_depth integer
+        )""")
+
+curr.execute("""CREATE TABLE unpacked_items (
+        id integer PRIMARY KEY,
+        item_name text,
+        item_width integer,
+        item_height integer,
+        item_depth integer
+        )""")
 
 def exit(e):
     root.destroy()
 
 root = Tk()
-root.geometry("700x600+0+0")
+root.state('zoomed')
 
-root.title("Bin-packing")
+
+root.title("Bin packing problem")
 root.configure(background='white')
 root.bind("<Escape>", exit)
 
@@ -71,7 +77,7 @@ itemDepth = int(itemDepth.get())
 
 lblBinName = Label(root, font=('georgia', 14, 'bold'), text="Nazwa kontenera ", fg='black', width=15, bd=10, anchor='w')
 lblBinName.grid(row=3, column=0)
-txtBinName = Entry(root, font=('arial', 14, 'bold'), bd=2, width=24, bg='white', justify='left', textvariable=binName)
+txtBinName = Entry(root, font=('arial', 14, 'bold'),  bd=2, width=24, bg='white', justify='left', textvariable=binName)
 txtBinName.grid(row=3, column=1)
 
 
@@ -126,33 +132,19 @@ def saveBinToDb():
     curr = conn.execute("SELECT * FROM bin")
     print(curr.fetchone())
 
-    curr = conn.execute("SELECT bin_name, bin_width, bin_height, bin_depth FROM bin")
-    records = curr.fetchall()
-    print(records)
 
-    print_binRecords = ''
-    for record in records:
-        print_binRecords += str(record[0]) + " " + "[" + str(record[1]) + ", " + str(record[2]) + ", " + str(record[3]) + "]" + "\n"
-
-    binRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Kontener", fg='black', width=15, bd=10, anchor='w')
-    binRecordTitle.grid(row=12, column=0)
-    binRecord = Label(root, font=('georgia', 16, 'bold'), text=print_binRecords, fg='black', width=15, bd=10,
-                      anchor='w')
-    binRecord.grid(row=13, column=0)
-
-    txtBinName.delete(0, END)
-    txtBinWidth.delete(0, END)
-    txtBinHeight.delete(0, END)
-    txtBinDepth.delete(0, END)
     txtBinName.configure(state="disabled")
     txtBinWidth.configure(state="disabled")
     txtBinHeight.configure(state="disabled")
     txtBinDepth.configure(state="disabled")
+    submitBinButton.configure(state="disabled")
 
     conn.commit()
     conn.close()
 
-submitBinButton = Button(pady=8, bd=2, fg='black', font=('arial', 10, 'bold'), width=15, text="Dodaj kontener", bg='white', command=saveBinToDb).grid(row=7, column=2)
+
+submitBinButton = Button(pady=8, bd=2, fg='black', relief=GROOVE, font=('arial', 10, 'bold'), width=15, text="Dodaj kontener", bg='white', command=saveBinToDb)
+submitBinButton.grid(row=7, column=2)
 
 
 def saveItemToDb():
@@ -168,19 +160,20 @@ def saveItemToDb():
     print(curr.fetchone())
 
 
-
     curr = conn.execute("SELECT item_name, item_width, item_height, item_depth FROM items")
     itemsRecords = curr.fetchall()
-
-    print_itemRecords = ''
-    for itemRecord in itemsRecords:
-        print_itemRecords += str(itemRecord[0]) + " " + "[" + str(itemRecord[1]) + ", " + str(itemRecord[2]) + ", " + str(itemRecord[3]) + "]" + "\n"
-
     itemRecordTitle = Label(root, font=('arial', 16, 'bold'), text="Przedmioty:", fg='black', width=15, bd=10, anchor='w')
-    itemRecordTitle.grid(row=12, column=1)
-    itemRecord = Label(root, font=('georgia', 16, 'bold'), text=print_itemRecords, fg='black', width=15, bd=10,
-                      anchor='w')
-    itemRecord.grid(row=13, column=1)
+    itemRecordTitle.grid(row=13, column=0)
+    scrollbar = Scrollbar(root)
+    scrollbar.grid(row=14, column=1)
+    listbox = Listbox(root, yscrollcommand=scrollbar.set)
+    for itemRecord in itemsRecords:
+        print_itemRecords = ''
+        print_itemRecords += str(itemRecord[0]) + " " + "[" + str(itemRecord[1]) + ", " + str(itemRecord[2]) + ", " + str(itemRecord[3]) + "]" + "\n"
+        listbox.insert(END, print_itemRecords)
+    listbox.grid(row=14, column=0)
+
+    scrollbar.config(command=listbox.yview)
 
     conn.commit()
     conn.close()
@@ -191,7 +184,7 @@ def saveItemToDb():
     txtItemDepth.delete(0, END)
 
 
-submitItemButton = Button(pady=8, bd=2, fg='black', font=('arial', 10, 'bold'), width=15, text="Dodaj przedmiot", bg='white', command=saveItemToDb).grid(row=13, column=2)
+submitItemButton = Button(pady=8, bd=2, fg='black', relief=GROOVE, font=('arial', 10, 'bold'), width=15, text="Dodaj przedmiot", bg='white', command=saveItemToDb).grid(row=12, column=2)
 
 
 bin1 = Bin("Box", 200.0, 200.0, 200.0)
@@ -210,13 +203,13 @@ item12 = Item("Item 12", 1.0, 1.0, 2.0)
 item13 = Item("Item 13", 2.0, 1.0, 2.0)
 
 
-root.mainloop()
+
 
 packer = Packer()
 
 packer.addBin(bin1)
 packer.addItem(item1)
-# packer.addItem(item2)
+#packer.addItem(item2)
 # packer.addItem(item3)
 # packer.addItem(item4)
 # packer.addItem(item5)
@@ -227,16 +220,17 @@ packer.addItem(item1)
 # packer.addItem(item10)
 
 # pack items into bin1
-# packer.pack()
+packer.pack()
 #
 # # item1
-# print(bin1.items)
+print(bin1.items)
 #
-# # items will be empty, all items was packed
-# print("Packer items")
-# # print(packer.items)
-# print(*packer.bins[0].items)
-#
-# print("Unfitted items")
-# # unfitItems will be empty, all items fit into bin1
-# print(*packer.unfitItems)
+# items will be empty, all items was packed
+print("Packer items")
+# print(packer.items)
+print(*packer.bins[0].items)
+
+print("Unfitted items")
+# unfitItems will be empty, all items fit into bin1
+print(*packer.unfitItems)
+root.mainloop()
