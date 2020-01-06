@@ -37,13 +37,9 @@ class Packer:
         if not fit:
             return self.items
 
-        # Pack unpacked items.
         for _i in range(1, len(self.items)):
             item = self.items[_i]
             for itemInBin in binn.items:
-                pv = []
-                fitted = False
-
                 if itemInBin.position[1] + itemInBin.getHeight() > binn.getHeight() and itemInBin.position[2] + \
                         itemInBin.getDepth() > binn.getDepth():
                     pv = [itemInBin.position[0] + itemInBin.getWidth(), itemInBin.position[1], itemInBin.position[2]]

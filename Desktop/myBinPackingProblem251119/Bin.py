@@ -36,17 +36,12 @@ class Bin:
     def putItem(self, itemToPutIn, itemPosition):
         box = self
         fit = False
-        itemToPutIn.position = itemPosition  # pozycja w kontenerze
+        itemToPutIn.position = itemPosition
         for i in range(6):
             itemToPutIn.rotationType = i
-            itemDimension = itemToPutIn.getDimension()  # wymiary itemu
-            print("item to put in")
-            print(itemToPutIn)
-            print(itemPosition)
-            # jeżeli item już sie nie mieści to próbujemy go obrócić
-            if box.getWidth() >= itemPosition[0] + itemDimension[0] and box.getHeight() >= itemPosition[1] + itemDimension[1] and box.getDepth() >= itemPosition[2] + itemDimension[2]:
-                print("Item added")
-
+            itemDimension = itemToPutIn.getDimension()
+            if box.getWidth() >= itemPosition[0] + itemDimension[0] and box.getHeight() >= \
+                    itemPosition[1] + itemDimension[1] and box.getDepth() >= itemPosition[2] + itemDimension[2]:
                 fit = True
                 for itemInBox in box.items:
                     if itemInBox.intersect(itemToPutIn):
@@ -56,5 +51,4 @@ class Bin:
                     box.items.append(itemToPutIn)
                     break
                 return fit
-
         return fit
