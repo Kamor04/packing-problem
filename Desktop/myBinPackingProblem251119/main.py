@@ -2,6 +2,8 @@ from Packer import Packer
 from Item import Item
 from Bin import Bin
 
+import itertools
+import functools
 from tkinter import *
 import sqlite3
 
@@ -66,11 +68,8 @@ binDepth = IntVar()
 
 itemName = StringVar()
 itemWidth = IntVar()
-itemWidth = int(itemWidth.get())
 itemHeight = IntVar()
-itemHeight = int(itemHeight.get())
 itemDepth = IntVar()
-itemDepth = int(itemDepth.get())
 
 
 lblBinName = Label(root, font=('georgia', 14, 'bold'), text="Nazwa kontenera ", fg='black', width=15, bd=10, anchor='w')
@@ -179,11 +178,10 @@ def saveItemToDb():
     txtItemDepth.delete(0, END)
 
 
-
 submitItemButton = Button(pady=8, bd=2, fg='black', relief=GROOVE, font=('arial', 10, 'bold'), width=15, text="Dodaj przedmiot", bg='white', command=saveItemToDb).grid(row=12, column=2)
 
-
-
+#
+#
 lblpackedItem = Label(root, font=('georgia', 14, 'bold'), text="Zapakowane ", fg='black', width=15, bd=10, anchor='w')
 lblpackedItem.grid(row=4, column=4)
 conn = sqlite3.connect('packingProblem.db')
@@ -191,18 +189,20 @@ curr = conn.execute("SELECT item_name FROM packed_items")
 itemsRecords = curr.fetchall()
 scrollbar = Scrollbar(root)
 scrollbar.grid(row=14, column=1, sticky=W+S+N)
-listbox = Listbox(root, width='36', yscrollcommand=scrollbar.set)
+listboxPacked = Listbox(root, width='36', yscrollcommand=scrollbar.set)
 for itemRecord in itemsRecords:
     print_itemRecords = ''
     print_itemRecords += str(itemRecord[0]) + " " + "[" + str(itemRecord[1]) + ", " + str(itemRecord[2]) + ", " + str(itemRecord[3]) + "]" + "\n"
-    listbox.insert(END, print_itemRecords)
-listbox.grid(row=5, column=4)
+    listboxPacked.insert(END, print_itemRecords)
+listboxPacked.grid(row=5, column=4)
 
-scrollbar.config(command=listbox.yview)
+scrollbar.config(command=listboxPacked.yview)
 
 
 lblunpackedItem= Label(root, font=('georgia', 14, 'bold'), text="Niezapakowane", fg='black', width=15, bd=10, anchor='w')
 lblunpackedItem.grid(row=4, column=6)
+conn = sqlite3.connect('packingProblem.db')
+curr = conn.execute("SELECT item_name FROM unpacked_items")
 
 scrollbar = Scrollbar(root)
 scrollbar.grid(row=14, column=1, sticky=W+S+N)
@@ -215,55 +215,73 @@ listbox.grid(row=5, column=6)
 
 scrollbar.config(command=listbox.yview)
 
+def multipleObjects():
 
-packButton = Button(pady=8, bd=2, fg='black', relief=GROOVE, font=('arial', 10, 'bold'), width=15, text="Pakuj", bg='white', command=saveItemToDb).grid(row=6, column=8)
+    entry_binName = txtBinName.get()
+    entry_binWidth = txtBinWidth.get()
+    entry_binHeight = txtBinHeight.get()
+    entry_binDepth = txtBinDepth.get()
 
-
-
-bin1 = Bin("Box", 200.0, 200.0, 200.0)
-item1 = Item(itemName, itemWidth, itemHeight, itemDepth)
-item2 = Item("Item 2", 20.0, 20.0, 2.0)
-item3 = Item("Item 3", 3000.0, 2000.0, 2.0)
-item4 = Item("Item 4", 10.0, 8.0, 2.0)
-item5 = Item("Item 5", 10.0, 10.0, 2.0)
-item6 = Item("Item 6", 20.0, 14.0, 2.0)
-item7 = Item("Item 7", 2.0, 20.0, 2.0)
-item8 = Item("Item 8", 10.0, 8.0, 4.0)
-item9 = Item("Item 9", 1.0, 1.0, 2.0)
-item10 = Item("Item 10", 10.0, 14.0, 2.0)
-item11 = Item("Item 11", 1.0, 1.0, 2.0)
-item12 = Item("Item 12", 1.0, 1.0, 2.0)
-item13 = Item("Item 13", 2.0, 1.0, 2.0)
+    NitemName = itemName.get()
+    NitemWidth = itemWidth.get()
+    NitemHeight = itemHeight.get()
+    NitemDepth = itemDepth.get()
 
 
+    bin1 = Bin(str(entry_binName), int(entry_binWidth), int(entry_binHeight), int(entry_binDepth))
+    print(bin1)
+    NitemName = Item(NitemName, NitemWidth, NitemHeight, NitemDepth)
+    packer = Packer()
+    packer.addBin(bin1)
+    packer.addItem(NitemName)
 
 
-packer = Packer()
+    packer.addItem(NitemName)
+    print(NitemName)
+    packer.pack()
+    print("Packer items")
+    # print(packer.items)
+    print(*packer.bins[0].items)
 
-packer.addBin(bin1)
-packer.addItem(item1)
-#packer.addItem(item2)
-# packer.addItem(item3)
-# packer.addItem(item4)
-# packer.addItem(item5)
-# packer.addItem(item6)
-# packer.addItem(item7)
-# packer.addItem(item8)
-# packer.addItem(item9)
-# packer.addItem(item10)
+    print("Unfitted items")
+    # unfitItems will be empty, all items fit into bin1
+    print(*packer.unfitItems)
+
 
 # pack items into bin1
-packer.pack()
-#
-# # item1
-print(bin1.items)
-#
-# items will be empty, all items was packed
-print("Packer items")
-# print(packer.items)
-print(*packer.bins[0].items)
+def packing():
+    entry_binName = txtBinName.get()
+    entry_binWidth = txtBinWidth.get()
+    entry_binHeight = txtBinHeight.get()
+    entry_binDepth = txtBinDepth.get()
+    bin1 = Bin(str(entry_binName), int(entry_binWidth), int(entry_binHeight), int(entry_binDepth))
 
-print("Unfitted items")
-# unfitItems will be empty, all items fit into bin1
-print(*packer.unfitItems)
+    curr1 = conn.execute("SELECT item_name, item_width, item_height, item_depth FROM items")
+    itemShapesInBase = curr1.fetchall()
+    merged = list(itertools.chain(*itemShapesInBase))
+    print(merged)
+
+    packer = Packer()
+    packer.addBin(bin1)
+    item1 = Item(merged[0], merged[1], merged[2], merged[3])
+    packer.addItem(item1)
+    packer.pack()
+    print("Packer items")
+    # print(packer.items)
+    print(*packer.bins[0].items)
+
+    print("Unfitted items")
+    # unfitItems will be empty, all items fit into bin1
+    print(*packer.unfitItems)
+    volume = tuple(functools.reduce(lambda x, y: x * y, tp) for tp in itemShapesInBase)
+    sortedVolume = sorted(volume, reverse=True)
+
+# items will be empty, all items was packed
+
+
+# # item1
+packButton = Button(pady=8, bd=2, fg='black', relief=GROOVE, font=('arial', 10, 'bold'), width=15, text="Pakuj", bg='white', command=packing).grid(row=6, column=8)
+# print(bin1.items)
+#
+
 root.mainloop()
