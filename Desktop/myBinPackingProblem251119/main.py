@@ -234,11 +234,11 @@ def packing():
         packer.addItem(obj)
         packer.pack()
 
-    for i in range(0, len(packer.bins[0].items)):
+    for i in range(len(packer.bins[0].items)):
         listboxPacked.insert(END, packer.bins[0].items[i].name)
 
-    listboxUnpacked.insert(END, packer.unfitItems[0].name)
-
+    for el in range(len(packer.unfitItems)):
+        listboxUnpacked.insert(END, packer.unfitItems[el].name)
     # volume = tuple(functools.reduce(lambda x, y: x * y, tp) for tp in itemShapesInBase)
     # sortedVolume = sorted(volume, reverse=True)
     packButton.configure(state="disabled")

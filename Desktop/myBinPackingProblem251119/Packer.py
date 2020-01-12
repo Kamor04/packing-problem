@@ -1,5 +1,5 @@
 from Item import StartPosition
-
+import functools
 
 class Packer:
 
@@ -65,6 +65,7 @@ class Packer:
         return unpacked
 
     def pack(self):
+        self.items.sort(reverse=True)
 
         while len(self.items) > 0:
             binn = self.findFittedBin(self.items[0])
