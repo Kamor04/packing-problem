@@ -180,8 +180,7 @@ def saveItemToDb():
 
 submitItemButton = Button(pady=8, bd=2, fg='black', relief=GROOVE, font=('arial', 10, 'bold'), width=15, text="Dodaj przedmiot", bg='white', command=saveItemToDb).grid(row=12, column=2)
 
-#
-#
+
 lblpackedItem = Label(root, font=('georgia', 14, 'bold'), text="Zapakowane ", fg='black', width=15, bd=10, anchor='w')
 lblpackedItem.grid(row=4, column=4)
 conn = sqlite3.connect('packingProblem.db')
@@ -214,13 +213,14 @@ listboxUnpacked.grid(row=5, column=6)
 
 scrollbar.config(command=listboxUnpacked.yview)
 
+
 def packing():
     entry_binName = txtBinName.get()
     entry_binWidth = txtBinWidth.get()
     entry_binHeight = txtBinHeight.get()
     entry_binDepth = txtBinDepth.get()
     bin1 = Bin(str(entry_binName), int(entry_binWidth), int(entry_binHeight), int(entry_binDepth))
-
+    conn = sqlite3.connect('packingProblem.db')
     curr1 = conn.execute("SELECT item_name, item_width, item_height, item_depth FROM items")
     itemShapesInBase = curr1.fetchall()
     ListOfItemsShapes = list(itertools.chain(*itemShapesInBase))
@@ -233,9 +233,19 @@ def packing():
         item_list.append(obj)
         packer.addItem(obj)
         packer.pack()
+        conn = sqlite3.connect('packingProblem.db')
+        if obj in packer.bins[0].items:
+            conn.execute('insert into packed_items values (NULL,?,?,?,?)',
+                         (str(ListOfItemsShapes[i]), str(ListOfItemsShapes[i + 1]), str(ListOfItemsShapes[i + 2]), str(ListOfItemsShapes[i + 3])))
+        else:
+            conn.execute('insert into unpacked_items values (NULL,?,?,?,?)',
+                         (str(ListOfItemsShapes[i]), str(ListOfItemsShapes[i + 1]), str(ListOfItemsShapes[i + 2]), str(ListOfItemsShapes[i + 3])))
+        conn.commit()
+        conn.close()
 
     for i in range(len(packer.bins[0].items)):
         listboxPacked.insert(END, packer.bins[0].items[i].name)
+
 
     for el in range(len(packer.unfitItems)):
         listboxUnpacked.insert(END, packer.unfitItems[el].name)

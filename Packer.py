@@ -1,5 +1,5 @@
 from Item import StartPosition
-import functools
+
 
 class Packer:
 
